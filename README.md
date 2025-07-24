@@ -2,7 +2,7 @@
 
 **SimpleInvoice** is a lightweight Django web application that allows freelancers and small business owners to easily generate, manage, and download professional invoices. Designed to be simple, clean, and fast.
 
-![Screenshot](screenshots/home.png)
+![Screenshot](screenshots/home.png.jpeg)
 
 ---
 
@@ -22,7 +22,7 @@
 
 Invoice Form 
 
- ![Form](screenshots/invoice_form.png) 
+ ![Form](screenshots/invoice_form.png.jpeg) 
 
 ---
 
