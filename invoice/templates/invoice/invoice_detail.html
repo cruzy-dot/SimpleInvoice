@@ -1,0 +1,44 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Invoice {{ invoice.id }}</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-gray-100 p-6">
+    <div class="max-w-2xl mx-auto bg-white rounded-xl shadow p-6">
+      <h1 class="text-2xl font-bold mb-4">Invoice #{{ invoice.id }}</h1>
+
+      <div class="space-y-2 text-gray-700">
+        <p><strong>Client Name:</strong> {{ invoice.client_name }}</p>
+        <p><strong>Email:</strong> {{ invoice.client_email }}</p>
+        <p><strong>Description:</strong> {{ invoice.description }}</p>
+        <p><strong>Amount:</strong> ${{ invoice.amount }}</p>
+        <p>
+        <p><strong>Status:</strong>
+    <span class="{% if invoice.status == 'paid' %}text-green-600{% else %}text-red-600{% endif %}">
+        {{ invoice.get_status_display }}
+    </span>
+</p>
+
+          <strong>Date Created:</strong> {{ invoice.created_at|date:"M d, Y H:i"
+          }}
+        </p>
+      </div>
+
+      <div class="mt-6">
+        <a
+          href="{% url 'invoice_pdf' invoice.id %}"
+          class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          >Download PDF</a
+        >
+        <a href="{% url 'home' %}" class="ml-4 text-gray-600 hover:underline"
+          >← Back</a
+        >
+      </div>
+    </div>
+  </body>
+</html>

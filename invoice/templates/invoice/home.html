@@ -1,0 +1,111 @@
+{% extends "base.html" %} {% load crispy_forms_tags %} {% block content %}
+<h1 class="text-red-700 text-3xl font-bold mb-6">New Invoice</h1>
+
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 text-white">
+  <div class="bg-blue-600 p-4 rounded-lg">
+    <h2 class="text-sm">Total Invoices</h2>
+    <p class="text-2xl font-bold">{{ total_invoices }}</p>
+  </div>
+  <div class="bg-green-600 p-4 rounded-lg">
+    <h2 class="text-sm">Total Amount</h2>
+    <p class="text-2xl font-bold">₦{{ total_amount }}</p>
+  </div>
+  <div class="bg-yellow-500 p-4 rounded-lg">
+    <h2 class="text-sm">Paid</h2>
+    <p class="text-2xl font-bold">{{ paid_count }}</p>
+  </div>
+  <div class="bg-red-500 p-4 rounded-lg">
+    <h2 class="text-sm">Unpaid</h2>
+    <p class="text-2xl font-bold">{{ unpaid_count }}</p>
+  </div>
+</div>
+
+<div class="bg-white rounded-lg p-6 shadow mb-8">
+  <div class="w-64 md:w-72">
+    <h2 class="text-xl font-bold mb-4">Invoice Status Chart</h2>
+    <canvas id="invoiceChart"></canvas>
+    <script>
+      const ctx = document.getElementById('invoiceChart').getContext('2d');
+      const invoiceChart = new Chart(ctx, {
+       type: 'doughnut',
+       data: {
+         labels: ['Paid', 'Unpaid'],
+         datasets: [{
+           label: 'Invoice Status',
+           data: [{{ paid_count }}, {{ unpaid_count }}],
+           backgroundColor: ['#16a34a', '#dc2626'],
+           borderColor: ['#15803d', '#b91c1c'],
+           borderWidth: 1
+         }]
+       },
+       options: {
+         responsive: true,
+         plugins: {
+           legend: {
+             position: 'bottom',
+              labels: {
+                font: {
+                  size: 12
+                }
+              }
+           }
+         }
+       }
+      });
+    </script>
+  </div>
+</div>
+
+<div class="bg-white rounded-lg p-6 shadow mb-8">
+  <h2 class="text-xl font-bold mb-4">Create New Invoice</h2>
+  <form method="post">
+    {% csrf_token %} {{ form|crispy }}
+    <button
+      type="submit"
+      class="mt-4 w-full bg-red-600 text-white py-2 rounded hover:bg-red-700"
+    >
+      Generate Invoice
+    </button>
+  </form>
+</div>
+
+<div class="bg-white rounded-lg p-6 shadow">
+  <h2 class="text-xl font-bold mb-4">All Invoices</h2>
+  {% for invoice in invoices %}
+  <div class="border-b py-4">
+    <strong>{{ invoice.client_name }}</strong><br />
+    {{ invoice.client_email }}<br />
+    <em>{{ invoice.description }}</em><br />
+    <strong>₦{{ invoice.amount }}</strong><br />
+    <p class="text-sm text-gray-600">
+      Status:
+      <span
+        class="{% if invoice.status == 'paid' %}text-green-600{% else %}text-red-600{% endif %}"
+      >
+        {{ invoice.get_status_display }}
+      </span>
+    </p>
+    <p class="text-sm text-gray-500">Date: {{ invoice.date }}</p>
+    <div class="mt-2 space-x-3">
+      <a
+        href="{% url 'invoice_detail' invoice.id %}"
+        class="text-sm text-blue-600 hover:underline"
+        >View</a
+      >
+      <a
+        href="{% url 'invoice_pdf' invoice.id %}"
+        class="text-sm bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+        >Download PDF</a
+      >
+      <a
+        href="{% url 'delete_invoice' invoice.id %}"
+        class="text-sm text-red-500 hover:underline"
+        >Delete</a
+      >
+    </div>
+  </div>
+  {% empty %}
+  <p>No invoices created yet.</p>
+  {% endfor %}
+</div>
+{% endblock %}
